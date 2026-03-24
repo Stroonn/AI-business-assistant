@@ -1,6 +1,7 @@
 from groq import Groq
 import os
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -17,24 +18,29 @@ def ask_ai(prompt: str) -> str:
 
     return response.choices[0].message.content
 
-def analyze_document(text: str) -> str:
+def analyze_document(text: str) -> dict:
     prompt = f"""
     Você é um sistema de análise de documentos empresariais.
 
-    Extraia e organize as seguintes informações:
+    Extraia e responda APENAS em JSON válido:
 
-    - Tipo de documento
-    - Valor total (apenas número)
-    - Data
-    - Partes envolvidas (se houver)
-    - Resumo curto
+    {{
+        "tipo": "",
+        "valor": 0,
+        "data": "",
+        "resumo": ""
+    }}
 
-    Responda de forma clara e organizada.
+    Regras:
+    - Identifique corretamente o tipo (ex: Nota Fiscal, Contrato, Recibo)
+    - valor deve ser número
+    - data no formato YYYY-MM-DD
+    - não escreva nada fora do JSON
 
     Documento:
     {text}
     """
-
+    
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
@@ -43,4 +49,12 @@ def analyze_document(text: str) -> str:
         ]
     )
 
-    return response.choices[0].message.content
+    content = response.choices[0].message.content
+
+    # limpa markdown
+    content = content.replace("```json", "").replace("```", "").strip()
+
+    try:
+        return json.loads(content)
+    except:
+        return {"erro": "Falha ao converter resposta", "raw": content}
