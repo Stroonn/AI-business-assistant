@@ -23,3 +23,23 @@ uvicorn app.main:app --reload</code></pre>
 Crie um arquivo .env:
 
 <pre><code>GROQ_API_KEY=sua_chave_aqui</code></pre>
+
+## 📌 Exemplo de uso
+
+Endpoint:
+POST /ai/ask
+
+<pre><code>{
+  "prompt": "Resuma uma nota fiscal de 1500 reais"
+}</code></pre>
+
+## 📄 Upload de PDF
+
+Permite enviar documentos PDF para análise automática com IA.
+
+- Extração de texto
+- Identificação de informações relevantes
+- Classificação do documento
+
+Endpoint:
+POST /pdf/upload
