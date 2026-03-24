@@ -14,5 +14,5 @@ async def upload_pdf(file: UploadFile = File(...)):
 
     return {
         "filename": file.filename,
-        "analysis": result
+        "data": result
     }
